@@ -1,0 +1,6 @@
+registry=http://10.188.25.62:9009/
+no_proxy=
+strict-ssl=false
+fetch-retry-maxtimeout=3000
+fetch-retry-mintimeout=3000
+fetch-retries=0

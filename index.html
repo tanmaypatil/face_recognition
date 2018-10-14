@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Demo: Face recognition</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/styles.css">
+
+</head>
+<body>
+
+
+<h3>Demo: face recognition</h3>
+
+<div class="container">
+  <div class ="row" >
+    <div class="col-6">
+      </div>
+    </div>
+  
+<div class ="row" > 
+  <div class="app col-6">
+
+    <a href="#" id="start-camera" class="visible">Touch here to start the app.</a>
+    <video id="camera-stream"></video>
+    <img id="snap">
+
+    <p id="error-message"></p>
+
+    <div class="controls">
+      <a href="#" id="delete-photo" title="Delete Photo" class="disabled"><i class="material-icons">delete</i></a>
+      <a href="#" id="take-photo" title="Take Photo"><i class="material-icons">camera_alt</i></a>
+      <a href="#" id="download-photo" download="selfie.png" title="Save Photo" class="disabled"><i class="material-icons">file_download</i></a>  
+    </div>
+
+    <!-- Hidden canvas element. Used for taking snapshot of video. -->
+    <canvas></canvas>
+
+  </div>
+  <div id="address" class="search col-2">
+    <div id ="wait">
+        <img src='assets/animate.gif' />
+    </div>
+    <div id="customAddr">
+       Name of player
+     </div>
+  </div>
+  </div>
+ 
+
+</div>
+
+
+<script src="assets/js/script.js"></script>
+
+</body>
+
+</html>
