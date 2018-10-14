@@ -1,16 +1,14 @@
-$(document).ready(function() {
-	console.log("document is rready ");
-	$("#wait").hide();
-	$(document).ajaxStop(function()
-	{
-		console.log("ajaxStop ");
-		$("#wait").hide();	
-	});
-	$(document).ajaxStart(function()
-	{
-		console.log("ajaxStart");
-		$("#wait").show();
-	});
+$(document).ready(function () {
+    console.log("document is rready ");
+    $("#wait").hide();
+    $(document).ajaxStop(function () {
+        console.log("ajaxStop ");
+        $("#wait").hide();
+    });
+    $(document).ajaxStart(function () {
+        console.log("ajaxStart");
+        $("#wait").show();
+    });
 });
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -28,16 +26,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // The getUserMedia interface is used for handling camera input.
     // Some browsers need a prefix so here we're covering all the options
-    navigator.getMedia = ( navigator.getUserMedia ||
-    navigator.webkitGetUserMedia ||
-    navigator.mozGetUserMedia ||
-    navigator.msGetUserMedia);
+    navigator.getMedia = (navigator.getUserMedia ||
+        navigator.webkitGetUserMedia ||
+        navigator.mozGetUserMedia ||
+        navigator.msGetUserMedia);
 
 
-    if(!navigator.getMedia){
+    if (!navigator.getMedia) {
         displayErrorMessage("Your browser doesn't have support for the navigator.getUserMedia interface.");
     }
-    else{
+    else {
 
         // Request the camera.
         navigator.getMedia(
@@ -45,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 video: true
             },
             // Success Callback
-            function(stream){
+            function (stream) {
 
                 // Create an object URL for the video stream and
                 // set it as src of our HTLM video element.
@@ -54,13 +52,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Play the video element to start the stream.
                 video.muted = true;
                 video.play();
-                video.onplay = function() {
+                video.onplay = function () {
                     showVideo();
                 };
-         
+
             },
             // Error Callback
-            function(err){
+            function (err) {
                 displayErrorMessage("There was an error with accessing the camera stream: " + err.name, err);
             }
         );
@@ -71,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Mobile browsers cannot play video without user input,
     // so here we're using a button to start it manually.
-    start_camera.addEventListener("click", function(e){
+    start_camera.addEventListener("click", function (e) {
 
         e.preventDefault();
 
@@ -82,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 
-    take_photo_btn.addEventListener("click", function(e){
+    take_photo_btn.addEventListener("click", function (e) {
 
         e.preventDefault();
 
@@ -95,10 +93,10 @@ document.addEventListener('DOMContentLoaded', function () {
         // Enable delete and save buttons
         delete_photo_btn.classList.remove("disabled");
         download_photo_btn.classList.remove("disabled");
-       
+
 
         // Set the href attribute of the download button to the snap url.
-        download_photo_btn.href = snap;
+        //download_photo_btn.href = snap;
 
         // Pause video playback of stream.
         video.pause();
@@ -107,65 +105,48 @@ document.addEventListener('DOMContentLoaded', function () {
         //setTimeout(null,1000);
         //let httpReq = new XMLHttpRequest();
         console.log("doing ajax request");
-
-		//console.log("ajaxStart");
-		$("#wait").show();
-        let url = "https://localhost:8080/dedupCheck" ;
+        let data = JSON.stringify({ data: snap });
+        //console.log("ajaxStart");
+        $("#wait").show();
+        let url = "https://localhost:8080/dedupCheck";
         var req = $.ajax(
-            { method  : "GET" ,
-            url   : url ,
-            dataType : "json" });
-
-            console.log('new syntax');
-            req.done ( function(result ) {
-                console.log(result);
-                //var player = JSON.parse(this.responseText);
-                player = result;
-                console.log(player.fullName);
-                //document.getElementById("address").value  = player.fullName ;
-                var top = document.getElementById("address");
-                var customAddr = document.getElementById("customAddr");
-                console.log("removing node ");
-                top.removeChild(customAddr);
-                let addr =  player.fullName ;
-               
-                var node = document.createTextNode(addr);
-                var div= document.createElement("div");
-                div.setAttribute("id","customAddr");
-                div.appendChild(node);
-                top.appendChild(div);
-               // $("#wait").show();
+            {
+                method: "POST",
+                url: url,
+                contentType: 'application/json',
+                data: data,
+                dataType: "json"
             });
-      
-            /*
-        httpReq.onreadystatechange = function() {
-            console.log("response back from server ") ;
-            if (this.readyState == 4 && this.status == 200) {
-                var player = JSON.parse(this.responseText);
-                console.log(player);
-                //document.getElementById("address").value  = player.fullName ;
-                var top = document.getElementById("address");
-                var customAddr = document.getElementById("customAddr");
-                console.log("removing node ");
-                top.removeChild(customAddr);
-                let addr =  player.fullName ;
-               
-                var node = document.createTextNode(addr);
-                var div= document.createElement("div");
-                div.setAttribute("id","customAddr");
-                div.appendChild(node);
-                top.appendChild(div);
-           };
-        }
-        httpReq.open("GET", url, true);
-        httpReq.send();*/
+
+        console.log('new syntax');
+        req.done(function (result) {
+            console.log(result);
+            //var player = JSON.parse(this.responseText);
+            let player = JSON.parse(result);
+            console.log(player.fullName);
+            //document.getElementById("address").value  = player.fullName ;
+            var top = document.getElementById("address");
+            var customAddr = document.getElementById("customAddr");
+            console.log("removing node ");
+            top.removeChild(customAddr);
+            let addr = player.fullName;
+
+            var node = document.createTextNode(addr);
+            var div = document.createElement("div");
+            div.setAttribute("id", "customAddr");
+            div.appendChild(node);
+            top.appendChild(div);
+
+        });
+
+
         console.log("fetch dedup info request sent ");
-        
+
 
     });
 
 
-    delete_photo_btn.addEventListener("click", function(e){
+    delete_photo_btn.addEventListener("click", function (e) {
 
         e.preventDefault();
 
@@ -186,8 +167,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-  
-    function showVideo(){
+
+    function showVideo() {
         // Display the video stream and the controls.
 
         hideUI();
@@ -196,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    function takeSnapshot(){
+    function takeSnapshot() {
         // Here we're using a trick that involves a hidden canvas element.  
 
         var hidden_canvas = document.querySelector('canvas'),
@@ -220,9 +201,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    function displayErrorMessage(error_msg, error){
+    function displayErrorMessage(error_msg, error) {
         error = error || "";
-        if(error){
+        if (error) {
             console.error(error);
         }
 
@@ -232,8 +213,8 @@ document.addEventListener('DOMContentLoaded', function () {
         error_message.classList.add("visible");
     }
 
-   
-    function hideUI(){
+
+    function hideUI() {
         // Helper function for clearing the app UI.
 
         controls.classList.remove("visible");

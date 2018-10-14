@@ -1,8 +1,17 @@
-var https = require('https');
-var fs = require('fs');
+let https = require('https');
+let fs = require('fs');
 const url = require('url');
 const path = require('path');
+let express = require('express');
+let bodyParser = require('body-parser');
 const dedup = require('./photoDedup');
+
+let app = express();
+const port = 8080;
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(express.static('assets'));
+app.use(express.static('.'));
 
 let dedupObj = new dedup.photoDedup('model.json');
 
@@ -11,66 +20,32 @@ const options = {
   cert: fs.readFileSync('./domain.crt')
 };
 
-console.log("starting  server") ;
-https.createServer(options ,function (req, res) {
-  console.log(`${req.method} ${req.url}`);
-  // parse URL
-  const parsedUrl = url.parse(req.url);
-  // extract URL path
-  let pathname = `.${parsedUrl.pathname}`;
-  // maps file extention to MIME types
-  const mimeType = {
-    '.ico': 'image/x-icon',
-    '.html': 'text/html',
-    '.js': 'text/javascript',
-    '.json': 'application/json',
-    '.css': 'text/css',
-    '.png': 'image/png',
-    '.jpg': 'image/jpeg',
-    '.wav': 'audio/wav',
-    '.mp3': 'audio/mpeg',
-    '.svg': 'image/svg+xml',
-    '.pdf': 'application/pdf',
-    '.doc': 'application/msword',
-    '.eot': 'appliaction/vnd.ms-fontobject',
-    '.ttf': 'aplication/font-sfnt'
-  };
-  console.log(req.method);
-  console.log(req.url);
-  if(req.method == 'GET' && 
-     req.url === '/dedupCheck') {
-        console.log('duplicate check');
-        let resObj = dedupObj.performPhotoDedup('selfie.png');
-        res.setHeader('Content-type', 'application/json' );
-        res.end(resObj);
-        return ;
-    }
-
-  fs.exists(pathname, function (exist) {
-    if(!exist) {
-      // if the file is not found, return 404
-      res.statusCode = 404;
-      res.end(`File ${pathname} not found!`);
-      return;
-    }
-    // if is a directory, then look for index.html
-    if (fs.statSync(pathname).isDirectory()) {
-      pathname += '/index.html';
-    }
- // read file from file system
- fs.readFile(pathname, function(err, data){
-  if(err){
-    res.statusCode = 500;
-    res.end(`Error getting the file: ${err}.`);
-  } else {
-    // based on the URL path, extract the file extention. e.g. .js, .doc, ...
-    const ext = path.parse(pathname).ext;
-    // if the file is found, set Content-type and send data
-    res.setHeader('Content-type', mimeType[ext] || 'text/plain' );
-    res.end(data);
-  }
-});
+https.createServer(options, app).listen(8080, function () {
+  console.log("express listening on port 8080");
 });
 
-}).listen(8080);
-console.log("listening ") ;
+app.post('/dedupCheck', function (req, res) {
+  console.log('duplicate check');
+  let snap = req.body.data;
+  //console.log('snap ' + req.body.data);
+  let base64Data = snap.replace(/^data:image\/png;base64,/, "");
+  fs.writeFile('./selfie.png', base64Data, 'base64', function (err) {
+    if (err) {
+      console.log('error ' + err);
+    }
+    else {
+      let player = dedupObj.performPhotoDedup('selfie.png');
+      //let resObj = { name: 'Viraat', fullName: 'viraat Kohli' };
+      res.setHeader('Content-type', 'application/json');
+      console.log('player is '+JSON.stringify(player));
+      res.end(JSON.stringify(player));
+    }
+
+  });
+
+
+  return;
+
+});
+
+

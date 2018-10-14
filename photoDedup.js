@@ -8,25 +8,13 @@ const path = require('path') ;
 class photoDedup {
    constructor ( repName ) {
        this.modelRepository  = repName ;
-       this.rootPath = path.join ( 'C:' , 'users' , 'tanmay_patil' , 'Downloads','selfie.png') ;
+       this.rootPath = path.join ( '.','selfie.png') ;
        console.log(this.rootPath );  
        recognizer.load(modelState);
    }
 
    performPhotoDedup ( fileName ) {
-      //const imgFile = path.join ( this.rootPath , 'selfie.png') ;
-      for ( ; ;) {
-         let fileExists = fs.existsSync(this.rootPath);
-        if( fileExists) {
-            fs.copyFileSync(this.rootPath, './selfie.png');
-            console.log("got the file");
-            break;
-        }
-        else {
-           setTimeout(function() {
-        }, 500);
-      }
-    }
+     
       const imgFile = "./selfie.png";
       console.log(imgFile);
       const startTime = new Date();
@@ -53,14 +41,11 @@ class photoDedup {
             dedupPlayer = val;
         }
     }
-      fs.unlink( this.rootPath, (err) => {
-         if(err) throw err;
-         console.log("successfully delete old file "+this.rootPath);
-      });
-      fs.unlink(imgFile, (err) => {
+     
+      /*fs.unlink(imgFile, (err) => {
         if (err) throw err;
         console.log('successfully deleted file'+imgFile);
-      });
+      });*/
       return JSON.stringify(dedupPlayer);
    }
 }
